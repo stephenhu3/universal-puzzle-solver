@@ -5,7 +5,7 @@
 # Names of projects for handin.
 # Needs to be changed for different projects!
 # It might be reasonable to pull these directly from the handin -l command.
-HANDIN_NAMES = milestone1 proj1
+HANDIN_NAMES = proj2
 
 # Files besides source and header files that participate in the project.
 # Needs to be changed for different projects!
@@ -106,7 +106,7 @@ todolist:
 	-@for file in $(ALLFILES:Makefile=); do fgrep -H -e TODO\: $$file; done; true
 
 # The patsubst at the start generates a list of targets that look like
-# handin-proj1.  The remainder is a little shell script that makes a
+# handin-proj2.  The remainder is a little shell script that makes a
 # temporary directory, storing its value in a temporary variable.
 # Copies all the files (not directories.. done sloppily) into the
 # temporary directory, goes into the temporary directory and cleans,

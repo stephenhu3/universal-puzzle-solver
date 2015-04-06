@@ -19,6 +19,8 @@ const int LinearHashDict::primes[] = {53, 97, 193, 389, 769, 1543, 3079,
 // The -1 at the end is to guarantee an immediate crash if we run off
 // the end of the array.
 
+#define HALF_LOAD_FACTOR 0.5
+
 LinearHashDict::LinearHashDict() {
   size_index = 0;
   size = primes[size_index];
@@ -75,6 +77,7 @@ std::cout << "*** REHASHING " << size;
 
 
   // TODO:  Your code goes here...
+  // copy everything from previous table into new table of next prime size
 
 
 // 221 Students:  DO NOT CHANGE OR DELETE THE NEXT FEW LINES!!!
@@ -92,6 +95,8 @@ bool LinearHashDict::find(PuzzleState *key, PuzzleState *&pred) {
   // Returns the associated value in pred
 
   // Be sure not to keep calling getUniqId() over and over again!
+  // use keyID in the bucket struct
+  // increment probes count
 
   // TODO:  Your code goes here...
   return true; // Stub:  Delete this when you've implemented the function.
@@ -100,7 +105,31 @@ bool LinearHashDict::find(PuzzleState *key, PuzzleState *&pred) {
 // You may assume that no duplicate PuzzleState is ever added.
 void LinearHashDict::add(PuzzleState *key, PuzzleState *pred) {
 
-  // TODO:  Your code goes here...
+  // NOW COMPLETE
+
+  bucket * entry = new bucket();
+  entry->key = key;
+  entry->data = pred;
+  entry->keyID = key->getUniqId();
+
+  int index = 0;
+  int available = (hash(entry->keyID)+index) % size;
+
+  // for any load factor less than 1, linear probing will find an empty slot, 
+  // but performance degrades for factor over 1/2
+  if (number/size > HALF_LOAD_FACTOR)
+    rehash(); // enlarge hash table to next size
+
+  while (table[available] != NULL) {
+    index++; // linear probing
+    available = (hash(entry->keyID)+index) % size;
+  }
+  
+  // found empty slot, place entry
+  table[available] = entry;
+
+  // increase number by one
+  number++;
 }
 
 #endif 

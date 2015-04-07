@@ -115,7 +115,7 @@ void LinearHashDict::add(PuzzleState *key, PuzzleState *pred) {
 
   // TODO:  Your code goes here...
 
-  double loadfactor = (double)number/(double)size;
+  double loadfactor = (double)(number+1)/(double)size;
 
   if (loadfactor > 0.5)
     rehash();

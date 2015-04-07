@@ -18,6 +18,7 @@ const int LinearHashDict::primes[] = {53, 97, 193, 389, 769, 1543, 3079,
 // http://planetmath.org/goodhashtableprimes
 // The -1 at the end is to guarantee an immediate crash if we run off
 // the end of the array.
+#define LARGEST_SIZE_INDEX 26
 
 LinearHashDict::LinearHashDict() {
   size_index = 0;
@@ -70,24 +71,25 @@ void LinearHashDict::rehash() {
 // your program is doing, so if you change things, we'll mark it wrong.
 #ifdef MARKING_TRACE
 std::cout << "*** REHASHING " << size;
-size_index++;
-  size = primes[size_index];
-  int oldsize = primes[size_index-1];
-  bucket* oldtable = table;
-  table = new bucket[size]();
-  number = 0;
-
-  for (int i=0; i<oldsize; i++) {
-    if (oldtable[i].key != NULL)
-    add(oldtable[i].key, oldtable[i].data);
-  }
-
-  delete [] oldtable;
 #endif
 // End of "DO NOT CHANGE" Block
 
+  // copy everything from previous table into new table of next prime size
+  // increment size_index, if size_index reached max size, don't resize anymore
+  int oldsize = primes[size_index];
+  if (++size_index == LARGEST_SIZE_INDEX);
+    return;
+  size = primes[size_index];
+  bucket* oldtable = table;
+  table = new bucket[size]();
 
-  // TODO:  Your code goes here...
+  for (int i = 0; i < oldsize; i++) {
+    if (oldtable[i].key != NULL)
+      add(oldtable[i].key, oldtable[i].data);
+  }
+
+  delete [] oldtable;
+
 
 
 // 221 Students:  DO NOT CHANGE OR DELETE THE NEXT FEW LINES!!!
@@ -106,37 +108,50 @@ bool LinearHashDict::find(PuzzleState *key, PuzzleState *&pred) {
 
   // Be sure not to keep calling getUniqId() over and over again!
 
-  // TODO:  Your code goes here...
-  return true; // Stub:  Delete this when you've implemented the function.
+  string findID = key->getUniqId();
+  int i = 1;
+  int searchIndex = hash(findID) % size;
+
+  // while not found, keep searching
+  while (table[searchIndex].keyID.compare(findID) != 0) {
+    probes_stats[searchIndex]++;
+    searchIndex = (hash(findID) + (i++)) % size;
+    if (i > size)
+      return false; // could not find it
+  }
+
+  // found it
+  probes_stats[searchIndex]++;
+  return true;
 }
 
 // You may assume that no duplicate PuzzleState is ever added.
 void LinearHashDict::add(PuzzleState *key, PuzzleState *pred) {
 
-  // TODO:  Your code goes here...
 
-  double loadfactor = (double)(number+1)/(double)size;
+  double loadfactor = (double)(number)/(double)size;
 
-  if (loadfactor > 0.5)
+  if (loadfactor > 0.5) 
     rehash();
   
   string uniqId = key->getUniqId();
 
   int i = 1;
-  int entry = hash(uniqId);
+  int entry = hash(uniqId) % size;
 
-    while (table[entry].key != NULL) {
-        entry = (hash(uniqId) + i) % size;
-        i++;
-        if (i == 500)
-          break;
-    }
+  while (table[entry].key != NULL) {
+      entry = (hash(uniqId) + (i++)) % size;
+      
+      // table full
+      if (i > size)
+        return;
+  }
 
-    if (table[entry].key == NULL) {
-  table[entry].key = key;
-  table[entry].data = pred;
-  table[entry].keyID = uniqId;
-  number++;
+  if (table[entry].key == NULL) {
+    table[entry].key = key;
+    table[entry].data = pred;
+    table[entry].keyID = uniqId;
+    number++;
   }
 }
 

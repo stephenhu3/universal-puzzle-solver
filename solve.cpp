@@ -161,6 +161,9 @@ int main ()
     solution[i]->print(cout);
     cout << endl;
   }
+
+  // // for debugging
+  // seenStates.callrehash();
   
   // Don't delete any states, as every state gets entered into the
   // seenStates dictionary, and each will get deleted exactly once

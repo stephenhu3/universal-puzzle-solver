@@ -19,8 +19,6 @@ const int LinearHashDict::primes[] = {53, 97, 193, 389, 769, 1543, 3079,
 // The -1 at the end is to guarantee an immediate crash if we run off
 // the end of the array.
 
-#define HALF_LOAD_FACTOR 0.5
-
 LinearHashDict::LinearHashDict() {
   size_index = 0;
   size = primes[size_index];
@@ -72,12 +70,24 @@ void LinearHashDict::rehash() {
 // your program is doing, so if you change things, we'll mark it wrong.
 #ifdef MARKING_TRACE
 std::cout << "*** REHASHING " << size;
+size_index++;
+  size = primes[size_index];
+  int oldsize = primes[size_index-1];
+  bucket* oldtable = table;
+  table = new bucket[size]();
+  number = 0;
+
+  for (int i=0; i<oldsize; i++) {
+    if (oldtable[i].key != NULL)
+    add(oldtable[i].key, oldtable[i].data);
+  }
+
+  delete [] oldtable;
 #endif
 // End of "DO NOT CHANGE" Block
 
 
   // TODO:  Your code goes here...
-  // copy everything from previous table into new table of next prime size
 
 
 // 221 Students:  DO NOT CHANGE OR DELETE THE NEXT FEW LINES!!!
@@ -95,8 +105,6 @@ bool LinearHashDict::find(PuzzleState *key, PuzzleState *&pred) {
   // Returns the associated value in pred
 
   // Be sure not to keep calling getUniqId() over and over again!
-  // use keyID in the bucket struct
-  // increment probes count
 
   // TODO:  Your code goes here...
   return true; // Stub:  Delete this when you've implemented the function.
@@ -105,31 +113,31 @@ bool LinearHashDict::find(PuzzleState *key, PuzzleState *&pred) {
 // You may assume that no duplicate PuzzleState is ever added.
 void LinearHashDict::add(PuzzleState *key, PuzzleState *pred) {
 
-  // NOW COMPLETE
+  // TODO:  Your code goes here...
 
-  bucket * entry = new bucket();
-  entry->key = key;
-  entry->data = pred;
-  entry->keyID = key->getUniqId();
+  double loadfactor = (double)number/(double)size;
 
-  int index = 0;
-  int available = (hash(entry->keyID)+index) % size;
-
-  // for any load factor less than 1, linear probing will find an empty slot, 
-  // but performance degrades for factor over 1/2
-  if (number/size > HALF_LOAD_FACTOR)
-    rehash(); // enlarge hash table to next size
-
-  while (table[available] != NULL) {
-    index++; // linear probing
-    available = (hash(entry->keyID)+index) % size;
-  }
+  if (loadfactor > 0.5)
+    rehash();
   
-  // found empty slot, place entry
-  table[available] = entry;
+  string uniqId = key->getUniqId();
 
-  // increase number by one
+  int i = 1;
+  int entry = hash(uniqId);
+
+    while (table[entry].key != NULL) {
+        entry = (hash(uniqId) + i) % size;
+        i++;
+        if (i == 500)
+          break;
+    }
+
+    if (table[entry].key == NULL) {
+  table[entry].key = key;
+  table[entry].data = pred;
+  table[entry].keyID = uniqId;
   number++;
+  }
 }
 
 #endif 

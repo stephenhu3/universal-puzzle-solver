@@ -81,13 +81,12 @@ std::cout << "*** REHASHING " << size;
   // copy everything from previous table into new table of next prime size
   // increment size_index, if size_index reached max size, don't resize anymore
   int oldsize = size;
-  if (++size_index == LARGEST_SIZE_INDEX);
+  // printf("size index %d\n", size_index);
+
+  if (++size_index == LARGEST_SIZE_INDEX)
     return;
-  printf("size index %d\n",size_index);
+  
   size = primes[size_index];
-  // issue here, pointer to old table, not a copy of the old table
-  // better to create an entirely new table and copy over
-  // bucket* oldtable = new bucket[oldsize]();
   
   // point to the old table, need to be a new copy
   bucket* oldtable = new bucket[oldsize]();
@@ -95,24 +94,10 @@ std::cout << "*** REHASHING " << size;
   int i;
   // are these actually new values, or pointer to the old table?
   for (i = 0; i < oldsize; i++) {
-    // PuzzleState *key_copy = new PuzzleState;
-    // string keyID_copy = new string;
-    // PuzzleState *data_copy = new PuzzleState;
-
-    bucket* bucket_copy = new bucket();
-
-    bucket_copy->key = table[i].key;
-    bucket_copy->data = table[i].data;
-    bucket_copy->keyID = table[i].keyID;
-    
-    oldtable[i] = *bucket_copy;
-    // oldtable[i].key = key_copy;
-    // oldtable[i].data = data_copy;
-    // oldtable[i].keyID = keyID_copy;
+    oldtable[i].key = table[i].key;
+    oldtable[i].data = table[i].data;
+    oldtable[i].keyID = table[i].keyID;
   }
-  // memcpy(oldtable, table, sizeof(table));
-  
-  // delete [] table;
 
   // table points to entirely new array of buckets new size
   // here we just zeroed the old array!, MISTAKE!!
@@ -126,16 +111,23 @@ std::cout << "*** REHASHING " << size;
       table[i].key = NULL;
   }
 
+  /*
+   //For debugging purposes
+  int j;
+  for (j = 0; j < oldsize; j++) {
+    std::cout << "j: " << j << "keyID: " << oldtable[j].keyID << std::endl;
+  }
+
+
+   //For debugging purposes
+  // int j;
+  for (j = 0; j < size; j++) {
+    std::cout << "k: " << j << "keyID: " << table[j].keyID << std::endl;
+  }
+  */
+
   // delete the old table
   delete [] oldtable;
-
-  
-
-  
-
-  
-
-
 
 // 221 Students:  DO NOT CHANGE OR DELETE THE NEXT FEW LINES!!!
 // And leave this at the end of the rehash() function.
@@ -153,6 +145,9 @@ bool LinearHashDict::find(PuzzleState *key, PuzzleState *&pred) {
 
   // Be sure not to keep calling getUniqId() over and over again!
 
+  // HUGE
+  // keuy insight here is that we need to find the null pred associated with the first key added
+
   // use key to find slot, then compare the pred
   string findID = key->getUniqId();
   int i = 0;
@@ -166,29 +161,37 @@ bool LinearHashDict::find(PuzzleState *key, PuzzleState *&pred) {
     // printf("size: %d\n", size);
     // printf("i: %d\n", i);
     // printf("number: %d\n", number);
-    if (i >= MAX_STATS)
+    if (i >= MAX_STATS) {
+      // WE MUST SET PRED TO NULL SINCE WE DIDNT FIND IT
+      pred = NULL;
       return false; // could not find it
+    }
   }
 
   // found it
   probes_stats[i]++;
-  // printf("found it\n");
-  pred = table[searchIndex].data; // Got it!  Get the result.
+  
+  if (table[searchIndex].data != NULL)
+    pred = table[searchIndex].data; // Got it!  Get the result.
+  else {
+    printf("found pred was null\n");
+    pred = NULL;
+  }
+
   return true;
 }
 
 // You may assume that no duplicate PuzzleState is ever added.
 void LinearHashDict::add(PuzzleState *key, PuzzleState *pred) {
 
-
-   //For debugging purposes
-  // int j;
-  // for (j = 0; j < size; j++) {
-  //   std::cout << "j: " << j << "keyID: " << table[j].keyID << std::endl;
-  // }
-
-  
   string uniqId = key->getUniqId();
+
+  double loadfactor = (double)number/(double)size;
+  // printf("load factor: %f\n", loadfactor);
+
+  if (loadfactor > 0.5) {
+    rehash();
+  }
 
   int i = 1;
   int entry = hash(uniqId) % size;
@@ -196,7 +199,7 @@ void LinearHashDict::add(PuzzleState *key, PuzzleState *pred) {
   while (table[entry].key != NULL) {
       entry = (hash(uniqId) + (i++)) % size;
       
-      // table full
+      // don't add if exceeds or equal max probes
       if (i >= MAX_STATS)
         return;
   }
@@ -206,15 +209,6 @@ void LinearHashDict::add(PuzzleState *key, PuzzleState *pred) {
   table[entry].keyID = uniqId;
   number++;
 
-  double loadfactor = (double)number/(double)size;
-  printf("load factor: %f\n", loadfactor);
-
-  if (loadfactor > 0.5) {
-    printf("rehashing\n");
-    rehash();
-    //issue here where the new array isn't actaully of new size, size not updated, scope issue?
-    // return add(key, pred);
-  }
 }
 
 #endif 

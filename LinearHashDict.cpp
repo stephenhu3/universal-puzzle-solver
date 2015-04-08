@@ -46,6 +46,17 @@ LinearHashDict::~LinearHashDict() {
   cout << "Probe Statistics for find():\n";
   for (int i=0; i<MAX_STATS; i++)
     cout << i << ": " << probes_stats[i] << endl;
+
+  // // Code for calculating average
+  int total = 0;
+  int samples = 0;
+  for (int i=0; i<MAX_STATS; i++) { 
+    samples += probes_stats[i];
+    for (int j = 0; j < probes_stats[i]; j++)
+      total = samples -probes_stats[0];
+  }
+  cout << "Average: " << (double)total/(double)samples << endl;  
+
   delete [] probes_stats;
 }
 
@@ -74,10 +85,10 @@ std::cout << "*** REHASHING " << size;
 #endif
 // End of "DO NOT CHANGE" Block
 
+  // std::cout << "Rehashing number = " << number << ", size = " << size << std::endl;
   // copy everything from previous table into new table of next prime size
   // increment size_index, if size_index reached max size, don't resize anymore
   int oldsize = size;
-  // printf("size index %d\n", size_index);
 
   if (++size_index == LARGEST_SIZE_INDEX)
     return;
@@ -88,7 +99,7 @@ std::cout << "*** REHASHING " << size;
   bucket* oldtable = new bucket[oldsize]();
 
   int i;
-  // are these actually new values, or pointer to the old table?
+
   for (i = 0; i < oldsize; i++) {
     oldtable[i].key = table[i].key;
     oldtable[i].data = table[i].data;
@@ -96,7 +107,6 @@ std::cout << "*** REHASHING " << size;
   }
 
   // table points to entirely new array of buckets new size
-  // here we just zeroed the old array!, MISTAKE!!
   table = new bucket[size]();
 
   // add back the old values to the new table
@@ -106,21 +116,6 @@ std::cout << "*** REHASHING " << size;
     else
       table[i].key = NULL;
   }
-
-  /*
-   //For debugging purposes
-  int j;
-  for (j = 0; j < oldsize; j++) {
-    std::cout << "j: " << j << "keyID: " << oldtable[j].keyID << std::endl;
-  }
-
-
-   //For debugging purposes
-  // int j;
-  for (j = 0; j < size; j++) {
-    std::cout << "k: " << j << "keyID: " << table[j].keyID << std::endl;
-  }
-  */
 
   // delete the old table
   delete [] oldtable;
@@ -141,24 +136,18 @@ bool LinearHashDict::find(PuzzleState *key, PuzzleState *&pred) {
 
   // Be sure not to keep calling getUniqId() over and over again!
 
-  // HUGE
-  // keuy insight here is that we need to find the null pred associated with the first key added
-
-  // use key to find slot, then compare the pred
+  // use key to find slot
   string findID = key->getUniqId();
   int i = 0;
   int searchIndex = hash(findID) % size;
 
   // while not found, keep searching
   while (table[searchIndex].keyID.compare(findID) != 0) {
-    probes_stats[i]++;
     searchIndex = (hash(findID) + (++i)) % size;
-    // problem is rehash isn't actually changing size
-    // printf("size: %d\n", size);
-    // printf("i: %d\n", i);
-    // printf("number: %d\n", number);
+    
     if (i >= MAX_STATS) {
       // WE MUST SET PRED TO NULL SINCE WE DIDNT FIND IT
+      probes_stats[MAX_STATS-1]++;
       pred = NULL;
       return false; // could not find it
     }
@@ -177,11 +166,9 @@ void LinearHashDict::add(PuzzleState *key, PuzzleState *pred) {
   string uniqId = key->getUniqId();
 
   double loadfactor = (double)number/(double)size;
-  // printf("load factor: %f\n", loadfactor);
 
-  if (loadfactor > 0.5) {
+  if (loadfactor > 0.5)
     rehash();
-  }
 
   int i = 1;
   int entry = hash(uniqId) % size;

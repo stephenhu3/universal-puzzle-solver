@@ -1,8 +1,8 @@
 Student Name #1: Stephen Hu
-Student ugrad login #1: 31580129
+Student ugrad login #1: c3p8
 
-Student Name #2: TODO:
-Student ugrad login #2: TODO:
+Student Name #2: Peter Chung
+Student ugrad login #2: n4u8
 
 Team name (for fun!): NSA
 
@@ -10,22 +10,27 @@ Acknowledgment that you understand and have followed the course's
 collaboration policy
 (http://www.ugrad.cs.ubc.ca/~cs221/current/syllabus.shtml#conduct):
 
-TODO: [[Put your names here again as a signature]]
+[[Put your names here again as a signature]]
 Stephen Hu
+Peter Chung
 
 TODO: submit using: make handin-proj2
 
 ----------------------------------------------------------------------
 
-Approximate hours on project: TODO:
+Approximate hours on project: 
+15 hrs
 
 ----------------------------------------------------------------------
 
-For teams, rough breakdown of work: TODO:
+For teams, rough breakdown of work:
+Stephen: AVLDict, DoubleHashDict
+Peter: LinearHashDict
 
 ----------------------------------------------------------------------
 
-Acknowledgment of assistance: TODO:
+Acknowledgment of assistance:
+Reading posts on Piazza
 
 ----------------------------------------------------------------------
 
@@ -88,14 +93,33 @@ How long did it take to solve the 4x4, 5x5, and 6x6 slider puzzles?
 Also, record what kind of computer you ran your experiments on.
 How do these times compare with your AVLDict implementation?
 
-TODO:
+MacBook Pro 2.53 GHz Core 2 Duo
+- 4x4 Slider Puzzle:
+Instantaneously (~0.34 s) in 46 steps.
+
+- 5x5 Slider Puzzle:
+Took 9.8 seconds in 65 steps.
+
+- 6x6 Slider Puzzle:
+Took longer than 2 minutes without achieving answer, so I stopped.
+
+These times were faster than my AVLDict.
 
 5.  For each of the 4x4, 5x5, and 6x6 slider puzzles,
 what was the average number of extra probes per call to find()
 recorded in the statistics reported by the program?  Is this growing
 as the puzzle size grows?
 
-TODO:
+- 4x4 Slider Puzzle:
+Average Extra Probes Per Call = 1.4227584440
+
+- 5x5 Slider Puzzle:
+Average Extra Probes Per Call = 1.39329712619
+
+- 6x6 Slider Puzzle:
+Average Extra Probes Per Call = Not determined
+
+No, the average of the calls decreased as the puzzle size grew.
 
 6.  While still using VectorPriorityQueue, edit solve.cpp to use
 your DoubleHashDict implementation.
@@ -103,7 +127,17 @@ How long did it take to solve the 4x4, 5x5, and 6x6 slider puzzles?
 Also, record what kind of computer you ran your experiments on.
 How do these times compare with your LinearHashDict implementation?
 
-TODO:
+MacBook Pro 2.53 GHz Core 2 Duo
+- 4x4 Slider Puzzle:
+Instantaneously (~0.32 s) in 57 steps.
+
+- 5x5 Slider Puzzle:
+Took 9.22 seconds in 65 steps.
+
+- 6x6 Slider Puzzle:
+Took longer than 2 minutes without achieving answer, so I stopped.
+
+My results were slightly slower than the linear hashmap implementation. My guess is due to the additional processing of the double hash function.
 
 7.  For each of the 4x4, 5x5, and 6x6 slider puzzles,
 what was the average number of extra probes per call to find()
@@ -111,7 +145,16 @@ recorded in the statistics reported by the program?
 How does this compare with your LinearHashDict implementation?
 Why isn't DoubleHashDict that much faster?
 
-TODO:
+- 4x4 Slider Puzzle:
+Average Extra Probes Per Call = 1.43827981734
+
+- 5x5 Slider Puzzle:
+Average Extra Probes Per Call =  1.3932000691
+
+- 6x6 Slider Puzzle:
+Average Extra Probes Per Call = Not determined
+
+Very similar averages with the LinearHashDict. DoubleHashDict isn't that much faster because it is still probing linearly with the double hash function.
 
 ----------------------------------------------------------------------
 

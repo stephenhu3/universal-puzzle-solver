@@ -12,10 +12,7 @@
 // 221 STUDENTS: You'll need to include any .hpp files of classes that
 // you create and use here
 #include "PuzzleState.hpp"
-#include "WolfGoatCabbage.hpp"
 #include "SliderPuzzle.hpp"
-#include "Sudoku.hpp"
-#include "MazeRunner.hpp"
 
 //#include "ArrayStack.hpp"
 //#include "LinkedListStack.hpp"
@@ -110,7 +107,7 @@ int main ()
   //startState = new Sudoku("167000000050600047000300009641057000800060005000980716700008000490006050000000671");
 
   // And this next one is a really easy Sudoku...
-  startState = new Sudoku("927430008060000097008000402000308005400060003800201000602000300790000080500089271");
+  // startState = new Sudoku("927430008060000097008000402000308005400060003800201000602000300790000080500089271");
 
   // startState = new MazeRunner(11,30,"    X                 X    X  XX XXXXXXXX  XXXXXX   X   XX   X X    X$    X  X   XXX  X    X X XXXXXXX  X      X    X  X X X          X  XXXXXX  XX XX   X          X  X       X  X    XXXXXXXXXXXX  X  XXXXXX  X      X      X   XXX  X  X   X X    X  X   X        X  X   X X    X  X   X   X    X  X   X X       X       X             ",0,0);
 
@@ -130,7 +127,7 @@ int main ()
   // startState = new SliderPuzzle(3,3,"8 7 6 5 4 3 2 1 0");
   // startState = new SliderPuzzle(3,4,"11 10 9 8 7 6 5 4 3 1 2 0");
   // startState = new SliderPuzzle(4,4,"15 14 13 12 11 10 9 8 7 6 5 4 3 1 2 0");
-  // startState = new SliderPuzzle(5,5,"24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0");
+  startState = new SliderPuzzle(5,5,"24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0");
   // startState = new SliderPuzzle(6,6,"35 34 33 32 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 1 2 0");
 
 
@@ -149,7 +146,7 @@ int main ()
   // LinkedListDict seenStates;
   // AVLDict seenStates;
   LinearHashDict seenStates;
-  //DoubleHashDict seenStates;
+  // DoubleHashDict seenStates;
 
   vector<PuzzleState*> solution;
 
@@ -162,9 +159,7 @@ int main ()
     cout << endl;
   }
 
-  // // for debugging
-  // seenStates.callrehash();
-  
+
   // Don't delete any states, as every state gets entered into the
   // seenStates dictionary, and each will get deleted exactly once
   // when seenStates destructor is called.

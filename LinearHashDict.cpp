@@ -20,10 +20,6 @@ const int LinearHashDict::primes[] = {53, 97, 193, 389, 769, 1543, 3079,
 // the end of the array.
 #define LARGEST_SIZE_INDEX 26
 
-// void LinearHashDict::callrehash() {
-//   rehash();
-// }      
-
 LinearHashDict::LinearHashDict() {
   size_index = 0;
   size = primes[size_index];
@@ -170,14 +166,8 @@ bool LinearHashDict::find(PuzzleState *key, PuzzleState *&pred) {
 
   // found it
   probes_stats[i]++;
+  pred = table[searchIndex].data; // Got it!  Get the result.
   
-  if (table[searchIndex].data != NULL)
-    pred = table[searchIndex].data; // Got it!  Get the result.
-  else {
-    printf("found pred was null\n");
-    pred = NULL;
-  }
-
   return true;
 }
 
